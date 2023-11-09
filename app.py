@@ -1,12 +1,12 @@
 from flask import Flask,request, jsonify
 import json
 
-app = Flask(__name__)  #instance of the flask web app
+app = Flask(__name__)  #instance of the flask web application
 
 
 #Route to accept POST request
 
-@app.route('/post',methods=['POST']) #This line defines a route for handling GET requests.
+@app.route('/post',methods=['POST']) #This line defines a route for handling POST requests.
 def store_input():
             try:
                 data = request.get_json()
@@ -14,7 +14,7 @@ def store_input():
                 if data:
                     with open('data.json', 'w') as json_file:
                         json_file.write(json.dumps(data, indent=4))
-                    return jsonify({"message": "Data stored successfully"})
+                    return jsonify({"message": "Data stored successfully"}), 201
                 else:
                     return jsonify({"error": "Invalid JSON data received"}), 400
             except Exception as e:
@@ -26,24 +26,24 @@ def store_input():
 
 @app.route("/get", methods=['GET'])
 def get_data():
-                try:
-                    with open("data.json",'r') as json_file:
-                        data = json.load(json_file)
-                        return jsonify(data)
-                except Exception as e:
-                     return jsonify({"Error": str(e)}), 500
+    try:
+        with open("data.json",'r') as json_file:
+            data = json.load(json_file)
+            return jsonify(data)
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
                 
 #Route to accept pull requests
 
 @app.route("/put", methods=['PUT'])
-def update_data():
+def overwite_data():
     try:
         data = request.get_json()
         if 'input' in data:
             with open("data.json","w") as json_file:
                 json.dump(data,json_file)
                         
-            return jsonify({"message": "Data Updated/pulled Successfully."})
+            return jsonify({"message": "Data overwrite Successfully."}),204
         else:
             return jsonify({"error":"Invalid payload format."}), 400
     except Exception as e:
@@ -64,7 +64,7 @@ def modify_data():
             #update the data in json file
             with open("data.json","w") as json_file:
                 json.dump(content,json_file)
-            return jsonify({"message":"Data patched successfully."})
+            return jsonify({"message":"Data patched successfully."}),204
         else:
             return jsonify({"error":"Invalid Payload Format"}),400
     except Exception as e:
