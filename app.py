@@ -20,7 +20,7 @@ def store_input():
             except Exception as e:
                 return jsonify({"error": f"An error occurred: {str(e)}"}), 500
             
-            #jsonify:- it is returned as a response in JSON format
+            #jsonify:- it is returned as a response in JSON format        
 
 #Route to accept GET request
 
@@ -50,25 +50,33 @@ def overwite_data():
         return jsonify({"error":str(e)}), 500
                 
 
-#route for patch requests
-
-@app.route("/patch",methods=['PATCH'])
+# Route for handling PATCH request
+@app.route('/patch', methods=['PATCH'])
 def modify_data():
     try:
+        # Get the data from the request payload
         data = request.get_json()
-        if 'input' in data:
-            with open("data.json","r+") as json_file:
-                content = json.load(json_file)
-                content["input"] = data["input"]
 
-            #update the data in json file
+        # Check if the 'name' field exists in the payload
+        if 'name' in data:
+            # Update the 'name' field
+            data['name'] = data['name']
+
+        # Check if the 'email' field exists in the payload
+        if 'email' in data:
+            # Update the 'email' field
+            data['email'] = data['email']
+
+        # Return a JSON response with the updated user data
+        if data:
             with open("data.json","w") as json_file:
-                json.dump(content,json_file)
-            return jsonify({"message":"Data patched successfully."}),204
-        else:
-            return jsonify({"error":"Invalid Payload Format"}),400
+                json.dump(data,json_file)
+        return jsonify({"message": "User data updated successfully", "data": data}), 200
+
     except Exception as e:
-         return jsonify({"error":str(e)}),500
+        # Handle exceptions and return an error response
+        return jsonify({"error": str(e)}), 500
+
 
 # Route to accept DELETE requests
 
@@ -82,10 +90,11 @@ def delete_data():
         return jsonify({"message": "Data deleted successfully."})
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 
             
 
 
 if __name__ == '__main__':
     app.run(debug=True)
 
+ 
